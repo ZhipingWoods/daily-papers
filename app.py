@@ -3,18 +3,16 @@ Daily LLM Quantization Papers - Vercel Web App
 Flask application for serving paper cards
 """
 
-from flask import Flask, render_template, jsonify
 import os
-import json
+import re
 import glob
 from datetime import datetime
+from flask import Flask, render_template, jsonify
 
 app = Flask(__name__)
 
-# Papers directory
+# Papers directory - Vercel uses /var/task
 PAPERS_DIR = os.path.join(os.path.dirname(__file__), 'papers')
-TEMPLATE_DIR = os.path.dirname(__file__)
-
 
 def get_latest_papers():
     """Get papers from the latest markdown file"""
@@ -28,7 +26,6 @@ def get_latest_papers():
     
     papers = []
     current_category = "LLM Quantization"
-    import re
     
     with open(latest_file, 'r', encoding='utf-8') as f:
         content = f.read()
@@ -122,12 +119,6 @@ def api_categories():
     papers = get_latest_papers()
     stats = get_stats(papers)
     return jsonify(stats['categories'])
-
-
-# For Vercel serverless function
-def handler(request):
-    """Vercel handler function"""
-    return app(request.environ, start_response)
 
 
 # For local development
