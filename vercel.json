@@ -4,7 +4,8 @@
       "src": "app.py",
       "use": "@vercel/python",
       "config": {
-        "runtime": "python3.10"
+        "runtime": "python3.10",
+        "maxDuration": 60
       }
     }
   ],
@@ -14,9 +15,5 @@
       "dest": "app.py"
     }
   ],
-  "functions": {
-    "app.py": {
-      "runtime": "python3.10"
-    }
-  }
+  "version": 2
 }
