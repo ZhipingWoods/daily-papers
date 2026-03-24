@@ -396,8 +396,8 @@
 
         <!-- Papers Grid -->
         <div class="papers-grid">
-            {% for paper in papers %}
-            <div class="paper-card">
+            {% for i, paper in enumerate(papers) %}
+            <div class="paper-card" onclick="openPaperDetail()" style="cursor:pointer">
                 <span class="paper-category {{ 'llm' if paper.category == 'LLM Quantization' else 'edge' if paper.category == 'Edge Deployment' else 'uav' }}">
                     {{ paper.category }}
                 </span>
@@ -472,3 +472,257 @@
     </script>
 </body>
 </html><!-- force rebuild Tue Mar 24 22:54:50 CST 2026 -->
+
+<!-- Paper Detail Modal -->
+<div id="paperModal" class="modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,0.8);">
+  <div class="modal-content" style="background-color:var(--bg-card);margin:5% auto;padding:24px;border:1px solid var(--border);border-radius:16px;width:90%;max-width:800px;max-height:90vh;overflow-y:auto;">
+    <span class="close" onclick="closeModal()" style="float:right;font-size:28px;font-weight:bold;cursor:pointer;">&times;</span>
+    <h2 id="modalTitle" style="color:var(--accent);margin-bottom:16px;"></h2>
+    <p id="modalAuthors" style="color:var(--text-secondary);margin-bottom:16px;"></p>
+    
+    <div style="margin:16px 0;">
+      <h3 style="color:var(--text-primary);margin:12px 0 8px;">📝 Abstract</h3>
+      <p id="modalAbstract" style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6;"></p>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;">
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">🎯 研究动机</h4>
+        <p id="modalMotivation" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">💡 贡献点</h4>
+        <p id="modalContributions" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;">
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">🔧 方法论</h4>
+        <p id="modalMethod" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">⚡ 优势</h4>
+        <p id="modalAdvantages" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0;">
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">📚 相关工作</h4>
+        <p id="modalRelatedWork" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+      <div style="background:var(--bg-secondary);padding:12px;border-radius:8px;">
+        <h4 style="color:var(--accent);margin-bottom:8px;">⚠️ 局限与优化</h4>
+        <p id="modalLimitations" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+      </div>
+    </div>
+    
+    <div style="margin:16px 0;padding:12px;background:var(--bg-secondary);border-radius:8px;">
+      <h4 style="color:var(--accent);margin-bottom:8px;">🖼️ 多模态支持</h4>
+      <p id="modalMultimodal" style="color:var(--text-secondary);font-size:0.85rem;"></p>
+    </div>
+    
+    <div style="margin-top:16px;">
+      <a id="modalLink" href="#" target="_blank" class="paper-link">Read Paper →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function openPaperDetail(paperId) {
+  fetch('/api/paper/' + paperId)
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('modalTitle').textContent = data.title || 'N/A';
+      document.getElementById('modalAuthors').textContent = data.authors || 'N/A';
+      document.getElementById('modalAbstract').textContent = data.abstract || 'N/A';
+      document.getElementById('modalMotivation').textContent = data.motivation || 'N/A';
+      document.getElementById('modalContributions').textContent = data.contributions || 'N/A';
+      document.getElementById('modalMethod').textContent = data.method_steps || 'N/A';
+      document.getElementById('modalAdvantages').textContent = data.why_better || 'N/A';
+      document.getElementById('modalRelatedWork').textContent = data.related_work || 'N/A';
+      document.getElementById('modalLimitations').textContent = (data.limitations || 'N/A') + '\n\n优化建议: ' + (data.optimization || 'N/A');
+      document.getElementById('modalMultimodal').textContent = data.multimodal_support || 'N/A';
+      document.getElementById('modalLink').href = data.url || '#';
+      document.getElementById('paperModal').style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Failed to load paper details');
+    });
+}
+
+function closeModal() {
+  document.getElementById('paperModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+  if (event.target == document.getElementById('paperModal')) {
+    closeModal();
+  }
+}
+</script>
+
+<!-- Paper Detail Modal -->
+<div id="paperModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div id="modalBody">
+            <div class="loading">Loading analysis...</div>
+        </div>
+    </div>
+</div>
+
+<style>
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    overflow-y: auto;
+}
+.modal-content {
+    background: var(--bg-card);
+    margin: 5% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 800px;
+    border-radius: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+.close-modal {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+.close-modal:hover { color: var(--text-primary); }
+.analysis-section {
+    margin-top: 20px;
+}
+.analysis-item {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+.analysis-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+.analysis-value {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+</style>
+
+<script>
+function openPaperDetail(paperId) {
+    const modal = document.getElementById('paperModal');
+    const modalBody = document.getElementById('modalBody');
+    modal.style.display = 'block';
+    modalBody.innerHTML = '<div class="loading">Loading analysis...</div>';
+    
+    fetch('/api/paper/' + paperId)
+        .then(res => res.json())
+        .then(data => {
+            modalBody.innerHTML = `
+                <h2 style="margin-bottom:20px;color:var(--text-primary)">${data.title || 'N/A'}</h2>
+                
+                <div class="analysis-section">
+                    <div class="analysis-item">
+                        <div class="analysis-label">📝 作者</div>
+                        <div class="analysis-value">${data.authors || 'N/A'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">📅 发表日期</div>
+                        <div class="analysis-value">${data.published || 'N/A'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">🏷️ 类别</div>
+                        <div class="analysis-value">${data.category || 'N/A'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">🎯 研究动机</div>
+                        <div class="analysis-value">${data.motivation || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">💡 本文贡献</div>
+                        <div class="analysis-value">${data.contributions || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">📚 相关工作</div>
+                        <div class="analysis-value">${data.related_work || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">🔧 方法论</div>
+                        <div class="analysis-value">${data.method_steps || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">✅ 为什么更好</div>
+                        <div class="analysis-value">${data.why_better || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">⚠️ 局限性</div>
+                        <div class="analysis-value">${data.limitations || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">🚀 优化建议</div>
+                        <div class="analysis-value">${data.optimization || '需要查看原文'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">🖼️ 多模态支持</div>
+                        <div class="analysis-value">${data.multimodal_support || '不确定'}</div>
+                    </div>
+                    
+                    <div class="analysis-item">
+                        <div class="analysis-label">📄 摘要</div>
+                        <div class="analysis-value">${data.abstract || 'N/A'}</div>
+                    </div>
+                </div>
+                
+                <a href="${data.abstract ? '' : '#'}" target="_blank" class="paper-link" style="display:inline-block;margin-top:20px">
+                    查看原文 →
+                </a>
+            `;
+        })
+        .catch(err => {
+            modalBody.innerHTML = '<div class="loading">Error loading analysis</div>';
+        });
+}
+
+function closeModal() {
+    document.getElementById('paperModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('paperModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
