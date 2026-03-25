@@ -396,8 +396,8 @@
 
         <!-- Papers Grid -->
         <div class="papers-grid">
-            {% for paper in papers %}
-            <div class="paper-card">
+            {% for i, paper in enumerate(papers) %}
+            <div class="paper-card" onclick="showDetail('{{ i }}')">
                 <span class="paper-category {{ 'llm' if paper.category == 'LLM Quantization' else 'edge' if paper.category == 'Edge Deployment' else 'uav' }}">
                     {{ paper.category }}
                 </span>
@@ -470,5 +470,16 @@
             window.location.href = url.toString();
         }
     </script>
+<!-- Modal -->
+<div id="detailModal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);overflow-y:auto;">
+<div style="background:#1c1c1f;margin:3% auto;padding:25px;width:95%;max-width:700px;border-radius:16px;color:#fafafa;max-height:90vh;overflow-y:auto;">
+<span onclick="document.getElementById('detailModal').style.display='none'" style="float:right;font-size:30px;cursor:pointer;color:#71717a;">&times;</span>
+<div id="modalContent" style="padding:15px;"><div style="text-align:center;padding:40px;color:#71717a;">Loading...</div></div>
+</div>
+</div>
+<script>
+function showDetail(idx){var m=document.getElementById('detailModal'),c=document.getElementById('modalContent');m.style.display='block';c.innerHTML='<div style="text-align:center;padding:40px;color:#71717a;">Loading analysis...</div>';fetch('/api/paper/'+idx).then(r=>r.json()).then(d=>{c.innerHTML='<h3 style="margin:0 0 20px;color:#fff">'+d.title+'</h3>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Authors</div><div style="color:#a1a1aa">'+d.authors+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Motivation</div><div style="color:#a1a1aa;line-height:1.5">'+d.motivation+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Contributions</div><div style="color:#a1a1aa;line-height:1.5">'+d.contributions+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Related Work</div><div style="color:#a1a1aa;line-height:1.5">'+d.related_work+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Methodology</div><div style="color:#a1a1aa;line-height:1.5">'+d.method_steps+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Why Better</div><div style="color:#a1a1aa;line-height:1.5">'+d.why_better+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#f59e0b;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Limitations</div><div style="color:#a1a1aa;line-height:1.5">'+d.limitations+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Optimization</div><div style="color:#a1a1aa;line-height:1.5">'+d.optimization+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Multimodal</div><div style="color:#a1a1aa">'+d.multimodal_support+'</div></div>'+'<div style="margin:12px 0;padding:14px;background:#141416;border-radius:10px"><div style="color:#10b981;font-size:11px;text-transform:uppercase;margin-bottom:6px;font-weight:600">Abstract</div><div style="color:#a1a1aa;line-height:1.6;font-size:13px">'+d.abstract+'</div></div>';}).catch(e=>{c.innerHTML='<div style="text-align:center;padding:40px;color:#71717a">Error</div>';})}
+window.onclick=function(e){if(e.target.id=='detailModal'){document.getElementById('detailModal').style.display='none'}}
+</script>
 </body>
 </html><!-- force rebuild Tue Mar 24 22:54:50 CST 2026 -->
