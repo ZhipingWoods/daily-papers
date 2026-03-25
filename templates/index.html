@@ -396,8 +396,8 @@
 
         <!-- Papers Grid -->
         <div class="papers-grid">
-            {% for paper in papers %}
-            <div class="paper-card">
+            {% for i, paper in enumerate(papers) %}
+            <div class="paper-card" onclick="openPaperDetail('{{ i }}')" style="cursor:pointer">
                 <span class="paper-category {{ 'llm' if paper.category == 'LLM Quantization' else 'edge' if paper.category == 'Edge Deployment' else 'uav' }}">
                     {{ paper.category }}
                 </span>
@@ -472,3 +472,33 @@
     </script>
 </body>
 </html><!-- force rebuild Tue Mar 24 22:54:50 CST 2026 -->
+
+<!-- Modal for Paper Detail -->
+<div id="paperModal" class="modal" style="display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.85);">
+<div class="modal-content" style="background:#1c1c1f;margin:5% auto;padding:30px;width:90%;max-width:800px;border-radius:16px;max-height:90vh;overflow-y:auto;color:#fafafa;">
+<span onclick="document.getElementById('paperModal').style.display='none'" style="float:right;font-size:32px;cursor:pointer;color:#71717a;">&times;</span>
+<div id="modalBody" style="padding:20px 0;">
+<div style="text-align:center;padding:60px;color:#71717a;">Loading analysis...</div>
+</div>
+</div>
+</div>
+<script>
+function openPaperDetail(idx){
+  var m=document.getElementById('paperModal'),b=document.getElementById('modalBody');
+  m.style.display='block';b.innerHTML='<div style="text-align:center;padding:60px;color:#71717a;">Loading analysis...</div>';
+  fetch('/api/paper/'+idx).then(r=>r.json()).then(d=>{
+    b.innerHTML='<h2 style="color:#fafafa;margin-bottom:24px;font-size:20px;line-height:1.4">'+d.title+'</h2>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">Authors</div><div style="color:#a1a1aa">'+d.authors+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">🎯 Research Motivation</div><div style="color:#a1a1aa;line-height:1.6">'+d.motivation+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">💡 Contributions</div><div style="color:#a1a1aa;line-height:1.6">'+d.contributions+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">📚 Related Work</div><div style="color:#a1a1aa;line-height:1.6">'+d.related_work+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">🔧 Methodology</div><div style="color:#a1a1aa;line-height:1.6">'+d.method_steps+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">✅ Why Better</div><div style="color:#a1a1aa;line-height:1.6">'+d.why_better+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#f59e0b;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">⚠️ Limitations</div><div style="color:#a1a1aa;line-height:1.6">'+d.limitations+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">🚀 Optimization</div><div style="color:#a1a1aa;line-height:1.6">'+d.optimization+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">🖼️ Multimodal Support</div><div style="color:#a1a1aa">'+d.multimodal_support+'</div></div>'+
+    '<div style="margin-bottom:16px;padding:16px;background:#141416;border-radius:12px"><div style="color:#10b981;font-size:12px;text-transform:uppercase;margin-bottom:8px;font-weight:600">📄 Abstract</div><div style="color:#a1a1aa;line-height:1.7;font-size:13px">'+d.abstract+'</div></div>';
+  }).catch(e=>{b.innerHTML='<div style="text-align:center;padding:60px;color:#71717a">Error loading analysis</div>';});
+}
+window.onclick=function(e){if(e.target.id==='paperModal'){document.getElementById('paperModal').style.display='none';}}
+</script>
