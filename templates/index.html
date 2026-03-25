@@ -396,8 +396,8 @@
 
         <!-- Papers Grid -->
         <div class="papers-grid">
-            {% for i, paper in enumerate(papers) %}
-            <div class="paper-card" onclick="openDetail('{{ i }}')" style="cursor:pointer">
+            {% for paper in papers %}
+            <div class="paper-card">
                 <span class="paper-category {{ 'llm' if paper.category == 'LLM Quantization' else 'edge' if paper.category == 'Edge Deployment' else 'uav' }}">
                     {{ paper.category }}
                 </span>
@@ -472,10 +472,3 @@
     </script>
 </body>
 </html><!-- force rebuild Tue Mar 24 22:54:50 CST 2026 -->
-<div id="detailModal" style="display:none;position:fixed;z-index:999;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);overflow:auto">
-<div style="background:#1c1c1f;margin:5% auto;padding:25px;width:92%;max-width:750px;border-radius:16px;color:#fafafa">
-<span onclick="document.getElementById('detailModal').style.display='none'" style="float:right;font-size:30px;cursor:pointer;color:#71717a">&times;</span>
-<div id="detailContent" style="padding:15px 0">Loading...</div>
-</div>
-</div>
-<script>function openDetail(i){var m=document.getElementById('detailModal'),c=document.getElementById('detailContent');m.style.display='block';c.innerHTML='Loading...';fetch('/api/paper/'+i).then(r=>r.json()).then(d=>{c.innerHTML='<h3 style="margin:0 0 15px;font-size:18px;line-height:1.4">'+d.title+'</h3><p style="color:#10b981;font-size:11px;margin:0 0 5px">AUTHORS</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px">'+d.authors+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">MOTIVATION</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.motivation+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">CONTRIBUTIONS</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.contributions+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">RELATED WORK</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.related_work+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">METHODOLOGY</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.method_steps+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">WHY BETTER</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.why_better+'</p><p style="color:#f59e0b;font-size:11px;margin:0 0 5px">LIMITATIONS</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.limitations+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">OPTIMIZATION</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px;line-height:1.5">'+d.optimization+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">MULTIMODAL</p><p style="color:#a1a1aa;margin:0 0 15px;font-size:13px">'+d.multimodal_support+'</p><p style="color:#10b981;font-size:11px;margin:0 0 5px">ABSTRACT</p><p style="color:#a1a1aa;font-size:13px;line-height:1.6">'+d.abstract+'</p>'}).catch(e=>{c.innerHTML='Error';});}document.getElementById('detailModal').onclick=function(e){if(e.target.id==='detailModal')this.style.display='none';};</script>
