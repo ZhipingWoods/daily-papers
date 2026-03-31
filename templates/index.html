@@ -396,8 +396,8 @@
 
         <!-- Papers Grid -->
         <div class="papers-grid">
-            {% for paper in papers %}
-            <div class="paper-card">
+            {% for i, paper in enumerate(papers) %}
+            <div class="paper-card" onclick="showDetail('{{ i }}')">
                 <span class="paper-category {{ 'llm' if paper.category == 'LLM Quantization' else 'edge' if paper.category == 'Edge Deployment' else 'uav' }}">
                     {{ paper.category }}
                 </span>
