@@ -230,3 +230,16 @@ def api_categories():
 # For local development
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+@app.route('/api/paper/<int:paper_id>')
+def api_paper_detail(paper_id):
+    """Get detailed analysis for a single paper"""
+    try:
+        from paper_analysis import analyze_paper
+        papers = get_latest_papers()
+        if paper_id < 0 or paper_id >= len(papers):
+            return jsonify({'error': 'Paper not found'}), 404
+        paper = papers[paper_id]
+        analysis = analyze_paper(paper)
+        return jsonify(analysis)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
